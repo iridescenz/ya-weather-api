@@ -1,23 +1,46 @@
 package main
 
- import (
- 	"fmt"
- 	weather "github.com/3crabs/go-yandex-weather-api"
- )
+import (
+	"fmt"
+	weather "github.com/3crabs/go-yandex-weather-api"
+)
 
- func main() {
-	var answer int
- 	yandexWeatherApiKey := "WRITE YOUR KEY"
-	 w, _ := weather.GetWeather(yandexWeatherApiKey, 55.7532, 37.622504)
+func main() {
+	yandexWeatherApiKey := "WRITE YOUR KEY"
+	w, _ := weather.GetWeather(yandexWeatherApiKey, 56.7532, 37.622504)
+	cond := weatherCondition(w.Fact.Condition)
+	temp := w.Fact.Temp
+	fellsLike := w.Fact.FeelsLike
+	wind := w.Fact.WindSpeed
+	windGust := w.Fact.WindGust
 
-	 fmt.Println("Угадайте сколько сейчас градусов")
-	 fmt.Scan(&answer)
+	fmt.Printf("Сегодня %s, температура %d °С, ощущается как %d °С. \nВетер %d метров в секунду,"+
+		" с порывами до %d метров в секунду. \n"+
+		"Давление %d мм рт. ст.", cond, temp, fellsLike, wind, windGust, w.Fact.PressureMm)
+}
 
-	 if w.Fact.Temp == answer {
-		 fmt.Printf("Правильно, на улице " + "%d" + " градусов по цельсию", answer)
-	 } else if  w.Fact.Temp != answer {
-				fmt.Printf("Не верно, на улице " + "%d" + " градусов по цельсию", w.Fact.Temp)
-	} else {
-		fmt.Printf("На улице " + "%d" + " градусов по цельсию", w.Fact.Temp)
+func weatherCondition(str string) string {
+	conditions := map[string]string{
+		"partly-cloudy":          "малооблачно",
+		"overcast":               "пасмурно",
+		"drizzle":                "морось",
+		"cloudy":                 "облачно с прояснениями",
+		"clear":                  "ясно",
+		"light-rain":             "небольшой дождь",
+		"rain":                   "дождь",
+		"moderate-rain":          "умеренно сильный дождь",
+		"heavy-rain":             "сильный дождь",
+		"continuous-heavy-rain":  "длительный сильный дождь",
+		"showers":                "ливень",
+		"wet-snow":               "дождь со снегом",
+		"light-snow":             "небольшой снег",
+		"snow":                   "снег",
+		"snow-showers":           "снегопад",
+		"hail":                   "град",
+		"thunderstorm":           "гроза",
+		"thunderstorm-with-rain": "дождь с грозой",
+		"thunderstorm-with-hail": "гроза с градом",
 	}
- }
+
+	return conditions[str]
+}
